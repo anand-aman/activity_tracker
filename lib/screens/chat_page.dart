@@ -52,9 +52,9 @@ class _ChitChat_ScreenState extends State<ChitChat_Screen> {
               splashColor: Colors.white30,
               onPressed: () async {
                 FirebaseAuth.instance.signOut();
-                Navigator.pushReplacementNamed(context, LoginPage.id);
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.remove('email');
+                Navigator.pushReplacementNamed(context, LoginPage.id);
               },
             )
           ],
