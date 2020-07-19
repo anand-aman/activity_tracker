@@ -77,7 +77,7 @@ class _LoginPageState extends State<LoginPage> {
                     if (user != null) {
                       SharedPreferences prefs = await SharedPreferences.getInstance();
                       prefs.setString('email', _emailInputController.text);
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+                      Navigator.pushReplacementNamed(context, HomePage.id);
                     }
                   } catch (err) {
                     AlertDialog(
@@ -114,9 +114,9 @@ class _LoginPageState extends State<LoginPage> {
                             fontWeight: FontWeight.bold),
                       ),
                       onPressed: () {
-                        Navigator.pushReplacement(
+                        Navigator.pushReplacementNamed(
                           context,
-                          MaterialPageRoute(builder: (context) => RegistrationScreen()),
+                          RegistrationScreen.id,
                         );
                       },
                     )

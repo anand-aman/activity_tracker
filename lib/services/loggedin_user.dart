@@ -2,6 +2,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 FirebaseUser _loggedInUser;
 final _auth = FirebaseAuth.instance;
+String _username = "";
+
+String get username {
+  return _username;
+}
+
+void set(String name) {
+  _username = name;
+}
 
 Future<FirebaseUser> getCurrentUser() async {
   try {

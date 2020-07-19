@@ -2,7 +2,7 @@ import 'package:activitytrackerapp/screens/chat_page.dart';
 import 'package:flutter/material.dart';
 
 class drawer1 extends StatelessWidget {
-  drawer1({@required this.go_to,@required this.displayTxt});
+  drawer1({@required this.go_to, @required this.displayTxt});
   final String go_to;
   final String displayTxt;
   @override
@@ -18,7 +18,7 @@ class drawer1 extends StatelessWidget {
               child: Image(
                 height: 100,
                 width: double.infinity,
-                image: AssetImage('asset1/sdd.jpg'),
+                image: AssetImage('asset/sdd.png'),
               ),
             ),
           ),

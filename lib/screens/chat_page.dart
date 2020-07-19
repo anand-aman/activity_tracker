@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'home_page.dart';
 import 'login_page.dart';
+import 'package:activitytrackerapp/services/loggedin_user.dart' as currentUser;
 
 final _firestore = Firestore.instance;
 FirebaseUser loggedInUser;
-int k = 0;
 
 // ignore: camel_case_types
 class ChitChat_Screen extends StatefulWidget {
@@ -31,11 +31,7 @@ class _ChitChat_ScreenState extends State<ChitChat_Screen> {
 
   void getCurrentUser() async {
     try {
-      final user = await _auth.currentUser();
-      if (user != null) {
-        loggedInUser = user;
-        print(loggedInUser.email);
-      }
+      loggedInUser = await currentUser.getCurrentUser();
     } catch (e) {
       print(e);
     }
@@ -56,7 +52,7 @@ class _ChitChat_ScreenState extends State<ChitChat_Screen> {
               splashColor: Colors.white30,
               onPressed: () async {
                 FirebaseAuth.instance.signOut();
-                Navigator.pushNamed(context, LoginPage.id);
+                Navigator.pushReplacementNamed(context, LoginPage.id);
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.remove('email');
               },
@@ -93,11 +89,8 @@ class _ChitChat_ScreenState extends State<ChitChat_Screen> {
                             messageText = value;
                           },
                           decoration: InputDecoration(
-                            hintStyle: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w100),
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 10.0, horizontal: 20.0),
+                            hintStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.w100),
+                            contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                             hintText: 'Type your message here...',
                             border: InputBorder.none,
                           ),
@@ -106,10 +99,15 @@ class _ChitChat_ScreenState extends State<ChitChat_Screen> {
                       FlatButton(
                         onPressed: () {
                           messageTextController.clear();
-                          _firestore.collection('messages1').add({
-                            'text': messageText,
-                            'sender': loggedInUser.email,
-                            'order': k,
+                          _firestore.collection('chats').add({}).then((docRef) {
+                            _firestore.collection('chats').document(docRef.documentID).setData({
+                              'text': messageText,
+                              'sender': currentUser.username,
+                              'senderEmail': loggedInUser.email,
+                              'msgDocID': docRef.documentID,
+                              'time':
+                                  Timestamp.fromMillisecondsSinceEpoch(DateTime.now().millisecondsSinceEpoch),
+                            });
                           });
                         },
                         child: Text(
@@ -137,7 +135,7 @@ class MessagesStream extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: _firestore.collection('messages1').orderBy('order').snapshots(),
+      stream: _firestore.collection('chats').orderBy('time').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Center(
@@ -147,17 +145,18 @@ class MessagesStream extends StatelessWidget {
           );
         }
         final messages = snapshot.data.documents.reversed;
-        final intt = snapshot.data.documents.length;
-        k = intt;
         List<MessageBubble> messageBubbles = [];
         for (var message in messages) {
           final messageText = message.data['text'];
           final messageSender = message.data['sender'];
-          final currentUser = loggedInUser.email;
+          final senderEmail = message.data['senderEmail'];
+          final msgDocID = message.data['msgDocID'];
           final messageBubble = MessageBubble(
             sender: messageSender,
             text: messageText,
-            isMe: currentUser == messageSender,
+            isMe: senderEmail == loggedInUser.email,
+            documentID: msgDocID,
+            senderEmail: senderEmail,
           );
 
           messageBubbles.add(messageBubble);
@@ -175,50 +174,62 @@ class MessagesStream extends StatelessWidget {
 }
 
 class MessageBubble extends StatelessWidget {
-  MessageBubble({this.sender, this.text, this.isMe});
+  MessageBubble({this.sender, this.senderEmail, this.text, this.isMe, this.documentID});
 
   final String sender;
+  final String senderEmail;
   final String text;
   final bool isMe;
+  final String documentID;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(10.0),
       child: Column(
-        crossAxisAlignment:
-            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            sender,
-            style: TextStyle(
-              fontSize: 12.0,
-              color: Colors.cyan,
+          Padding(
+            padding: const EdgeInsets.only(bottom: 4.0),
+            child: Text(
+              sender,
+              style: TextStyle(
+                fontSize: 12.0,
+                color: Colors.cyan,
+              ),
             ),
           ),
-          Material(
-            borderRadius: isMe
-                ? BorderRadius.only(
-                    topLeft: Radius.circular(30.0),
-                    bottomLeft: Radius.circular(30.0),
-                    bottomRight: Radius.circular(30.0))
-                : BorderRadius.only(
-                    bottomLeft: Radius.circular(30.0),
-                    bottomRight: Radius.circular(30.0),
-                    topRight: Radius.circular(30.0),
+          GestureDetector(
+            child: Material(
+              borderRadius: isMe
+                  ? BorderRadius.only(
+                      topLeft: Radius.circular(30.0),
+                      bottomLeft: Radius.circular(30.0),
+                      bottomRight: Radius.circular(30.0))
+                  : BorderRadius.only(
+                      bottomLeft: Radius.circular(30.0),
+                      bottomRight: Radius.circular(30.0),
+                      topRight: Radius.circular(30.0),
+                    ),
+              elevation: 5.0,
+              color: isMe ? Colors.lightBlueAccent : Colors.white,
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                child: Text(
+                  text,
+                  style: TextStyle(
+                    color: isMe ? Colors.white : Colors.black54,
+                    fontSize: 18.0,
                   ),
-            elevation: 5.0,
-            color: isMe ? Colors.lightBlueAccent : Colors.white,
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-              child: Text(
-                text,
-                style: TextStyle(
-                  color: isMe ? Colors.white : Colors.black54,
-                  fontSize: 18.0,
                 ),
               ),
             ),
+            onLongPress: () {
+              if (loggedInUser.email == senderEmail) {
+                _firestore.collection('chats').document(documentID).delete();
+                print('Message Deleted.');
+              }
+            },
           ),
         ],
       ),

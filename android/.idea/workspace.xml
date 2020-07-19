@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="7ed48bc4-941b-489c-aca4-0b2276d9608c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/src/debug/gen/com/regalcoder/activitytrackerapp/BuildConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/debug/gen/com/regalcoder/activitytrackerapp/Manifest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/debug/gen/com/regalcoder/activitytrackerapp/R.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/profile/gen/com/regalcoder/activitytrackerapp/BuildConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/profile/gen/com/regalcoder/activitytrackerapp/Manifest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/profile/gen/com/regalcoder/activitytrackerapp/R.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+    <list default="true" id="4590fec0-d091-4247-bc03-9273cd45ba7c" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../.packages" beforeDir="false" afterPath="$PROJECT_DIR$/../.packages" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../asset1/sdd.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/components/drawer.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/components/drawer.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/screens/chat_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/screens/chat_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/screens/home_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/screens/home_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/screens/registeration_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/screens/registeration_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,15 +36,15 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectId" id="1eoQM8BQbaUYla6ahRLhD87lyze" />
+  <component name="ProjectId" id="1euvO3hZ2FdfGH8xDBsE0jJ5KLU" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
@@ -44,11 +53,11 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="7ed48bc4-941b-489c-aca4-0b2276d9608c" name="Default Changelist" comment="" />
-      <created>1594985414857</created>
+      <changelist id="4590fec0-d091-4247-bc03-9273cd45ba7c" name="Default Changelist" comment="" />
+      <created>1595184256483</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1594985414857</updated>
+      <updated>1595184256483</updated>
     </task>
     <servers />
   </component>

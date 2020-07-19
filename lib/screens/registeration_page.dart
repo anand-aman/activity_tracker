@@ -1,4 +1,5 @@
 import 'package:activitytrackerapp/screens/home_page.dart';
+import 'package:activitytrackerapp/screens/login_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:activitytrackerapp/constants.dart';
@@ -8,7 +9,6 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RegistrationScreen extends StatefulWidget {
-
   static const String id = 'registration_screen';
   @override
   _RegistrationScreenState createState() => _RegistrationScreenState();
@@ -93,6 +93,27 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     buttonName: 'Register',
                     buttonColor: Colors.lightBlueAccent,
                     onPress: () async {
+                      if (_pwdInputController.text != _confirmPwdInputController.text) {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("Error"),
+                              content: Text("The passwords do not match"),
+                              actions: <Widget>[
+                                FlatButton(
+                                  child: Text("Close"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                )
+                              ],
+                            );
+                          },
+                        );
+                        return;
+                      }
+
                       setState(() {
                         showSpinner = true;
                       });
@@ -111,12 +132,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           setState(() {
                             showSpinner = false;
                           });
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => HomePage(),
-                            ),
-                          );
+                          Navigator.pushReplacementNamed(context, HomePage.id);
                         },
                       ).catchError((onError) {
                         setState(() {
@@ -164,6 +180,31 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       SharedPreferences prefs = await SharedPreferences.getInstance();
                       prefs.setString('email', _emailInputController.text);
                     },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          "Already have an account?",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        FlatButton(
+                          child: Text(
+                            "Login here!",
+                            style: TextStyle(
+                                color: Colors.lightBlueAccent,
+                                fontSize: 20,
+                                fontFamily: 'Shadows',
+                                fontWeight: FontWeight.bold),
+                          ),
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(context, LoginPage.id);
+                          },
+                        )
+                      ],
+                    ),
                   ),
                 ],
               ),

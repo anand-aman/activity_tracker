@@ -1,10 +1,10 @@
+import 'package:activitytrackerapp/screens/login_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:activitytrackerapp/components/custom_cards.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:activitytrackerapp/services/active_user_stream.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:activitytrackerapp/services/loggedin_user.dart' as currentUser;
 import 'package:activitytrackerapp/components/drawer.dart';
 import 'package:activitytrackerapp/screens/chat_page.dart';
@@ -19,7 +19,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String dropdownValue = 'Web';
   bool _isActive;
   bool _isLoaded = false;
@@ -32,14 +31,11 @@ class _HomePageState extends State<HomePage> {
 
   void getData() async {
     await getUser().then((value) {
-      _firestore
-          .collection('users')
-          .document(loggedInUser.uid)
-          .get()
-          .then((value) {
+      _firestore.collection('users').document(loggedInUser.uid).get().then((value) {
         _isActive = value.data['active'];
         _activeUserDocID = value.data['activeDocID'];
         _userName = value.data['name'];
+        currentUser.set(_userName);
       }).then((value) {
         setState(() {
           _isLoaded = true;
@@ -51,8 +47,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    print('Initialized');
     getData();
-    _firebaseMessaging.getToken().then((value) => print(value));
   }
 
   @override
@@ -72,7 +68,7 @@ class _HomePageState extends State<HomePage> {
               splashColor: Colors.white30,
               onPressed: () async {
                 FirebaseAuth.instance.signOut();
-                Navigator.pop(context);
+                Navigator.pushReplacementNamed(context, LoginPage.id);
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.remove('email');
               },
@@ -81,7 +77,7 @@ class _HomePageState extends State<HomePage> {
           backgroundColor: Color(0xFF222B45),
         ),
         drawer: drawer1(
-          go_to:  ChitChat_Screen.id,
+          go_to: ChitChat_Screen.id,
           displayTxt: 'Chat Arena',
         ),
         body: SafeArea(
@@ -171,8 +167,7 @@ class _HomePageState extends State<HomePage> {
                                           });
                                         },
                                         items: <String>['Web', 'Android', 'iOS']
-                                            .map<DropdownMenuItem<String>>(
-                                                (String value) {
+                                            .map<DropdownMenuItem<String>>((String value) {
                                           return DropdownMenuItem<String>(
                                             value: value,
                                             child: Text(value),
@@ -184,23 +179,17 @@ class _HomePageState extends State<HomePage> {
                             Padding(
                               padding: const EdgeInsets.all(10.0),
                               child: RaisedButton(
-                                color: _isActive
-                                    ? Colors.redAccent
-                                    : Color(0xFF0676ED),
+                                color: _isActive ? Colors.redAccent : Color(0xFF0676ED),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(25.0),
                                 ),
                                 child: Text(
                                   _isActive ? 'End' : 'Start',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 16),
+                                  style: TextStyle(color: Colors.white, fontSize: 16),
                                 ),
                                 onPressed: _isActive
                                     ? () {
-                                        _firestore
-                                            .collection("active")
-                                            .document(_activeUserDocID)
-                                            .delete();
+                                        _firestore.collection("active").document(_activeUserDocID).delete();
                                         _firestore
                                             .collection("users")
                                             .document(loggedInUser.uid)
@@ -214,9 +203,7 @@ class _HomePageState extends State<HomePage> {
                                         _firestore.collection("active").add({
                                           "name": _userName,
                                           "platform": dropdownValue,
-                                          "time": TimeOfDay.now()
-                                              .format(context)
-                                              .toString(),
+                                          "time": TimeOfDay.now().format(context).toString(),
                                         }).then((docRef) {
                                           _firestore
                                               .collection("users")
