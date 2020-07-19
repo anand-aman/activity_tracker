@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
+  static const String id = 'login_screen';
   @override
   _LoginPageState createState() => _LoginPageState();
 }
