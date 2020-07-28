@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:activitytrackerapp/components/custom_cards.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:activitytrackerapp/services/active_user_stream.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:activitytrackerapp/services/loggedin_user.dart' as currentUser;
 import 'package:activitytrackerapp/components/drawer.dart';
@@ -22,6 +23,7 @@ class _HomePageState extends State<HomePage> {
   String dropdownValue = 'Web';
   bool _isActive;
   bool _isLoaded = false;
+  bool _spinner = false;
   String _activeUserDocID;
   String _userName = "";
 
@@ -31,7 +33,11 @@ class _HomePageState extends State<HomePage> {
 
   void getData() async {
     await getUser().then((value) {
-      _firestore.collection('users').document(loggedInUser.uid).get().then((value) {
+      _firestore
+          .collection('users')
+          .document(loggedInUser.uid)
+          .get()
+          .then((value) {
         _isActive = value.data['active'];
         _activeUserDocID = value.data['activeDocID'];
         _userName = value.data['name'];
@@ -80,153 +86,182 @@ class _HomePageState extends State<HomePage> {
           go_to: ChitChat_Screen.id,
           displayTxt: 'Chat Arena',
         ),
-        body: SafeArea(
-          child: _isLoaded
-              ? Column(
-                  children: <Widget>[
-                    Expanded(
-                      child: ContainerCard(
-                        cardChild: Column(
-                          children: <Widget>[
-                            Container(
-                              padding: EdgeInsets.all(8.0),
-                              margin: EdgeInsets.all(10.0),
-                              decoration: BoxDecoration(
-                                color: Color(0x334AC2AB),
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
-                              child: Text(
-                                'Active Users',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF4AC2AB),
-                                  fontSize: 22.0,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              color: Color(0xFF2E3A59),
-                              margin: EdgeInsets.symmetric(vertical: 10.0),
-                              height: 2.0,
-                            ), //HorizontalDivider
-                            Expanded(
-                              child: ActiveUserStream(),
-                            ) //Will be changed to StreamBuilder
-                          ],
-                        ),
-                      ),
-                    ),
-                    ContainerCard(
-                      cardChild: Container(
-                        width: double.infinity,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Text(
-                                _userName,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 25.0,
-                                ),
-                              ),
-                            ),
-                            _isActive
-                                ? Container()
-                                : Container(
-                                    margin: EdgeInsets.all(10.0),
-                                    padding: EdgeInsets.only(left: 10.0),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: Color(0x990676ED),
-                                      ),
-                                      borderRadius: BorderRadius.circular(2.0),
-                                    ),
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton<String>(
-                                        elevation: 15,
-                                        value: dropdownValue,
-                                        hint: Text(
-                                          'Platform',
-                                          style: TextStyle(color: Colors.grey),
-                                        ),
-                                        icon: Icon(
-                                          Icons.arrow_drop_down,
-                                          color: Colors.grey,
-                                        ),
-                                        dropdownColor: Color(0xFF1A1F38),
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                        ),
-                                        onChanged: (String value) {
-                                          print(value);
-                                          setState(() {
-                                            dropdownValue = value;
-                                          });
-                                        },
-                                        items: <String>['Web', 'Android', 'iOS']
-                                            .map<DropdownMenuItem<String>>((String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(value),
-                                          );
-                                        }).toList(),
-                                      ),
-                                    ),
-                                  ),
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: RaisedButton(
-                                color: _isActive ? Colors.redAccent : Color(0xFF0676ED),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(25.0),
+        body: ModalProgressHUD(
+          inAsyncCall: _spinner,
+          child: SafeArea(
+            child: _isLoaded
+                ? Column(
+                    children: <Widget>[
+                      Expanded(
+                        child: ContainerCard(
+                          cardChild: Column(
+                            children: <Widget>[
+                              Container(
+                                padding: EdgeInsets.all(8.0),
+                                margin: EdgeInsets.all(10.0),
+                                decoration: BoxDecoration(
+                                  color: Color(0x334AC2AB),
+                                  borderRadius: BorderRadius.circular(5.0),
                                 ),
                                 child: Text(
-                                  _isActive ? 'End' : 'Start',
-                                  style: TextStyle(color: Colors.white, fontSize: 16),
+                                  'Active Users',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF4AC2AB),
+                                    fontSize: 22.0,
+                                  ),
                                 ),
-                                onPressed: _isActive
-                                    ? () {
-                                        _firestore.collection("active").document(_activeUserDocID).delete();
-                                        _firestore
-                                            .collection("users")
-                                            .document(loggedInUser.uid)
-                                            .updateData({"active": false});
-                                        setState(() {
-                                          _isActive = !_isActive;
-                                        });
-                                      }
-                                    : () {
-                                        print(loggedInUser.uid);
-                                        _firestore.collection("active").add({
-                                          "name": _userName,
-                                          "platform": dropdownValue,
-                                          "time": TimeOfDay.now().format(context).toString(),
-                                        }).then((docRef) {
+                              ),
+                              Container(
+                                color: Color(0xFF2E3A59),
+                                margin: EdgeInsets.symmetric(vertical: 10.0),
+                                height: 2.0,
+                              ), //HorizontalDivider
+                              Expanded(
+                                child: ActiveUserStream(),
+                              ) //Will be changed to StreamBuilder
+                            ],
+                          ),
+                        ),
+                      ),
+                      ContainerCard(
+                        cardChild: Container(
+                          width: double.infinity,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Text(
+                                  _userName,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 25.0,
+                                  ),
+                                ),
+                              ),
+                              _isActive
+                                  ? Container()
+                                  : Container(
+                                      margin: EdgeInsets.all(10.0),
+                                      padding: EdgeInsets.only(left: 10.0),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: Color(0x990676ED),
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(2.0),
+                                      ),
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton<String>(
+                                          elevation: 15,
+                                          value: dropdownValue,
+                                          hint: Text(
+                                            'Platform',
+                                            style:
+                                                TextStyle(color: Colors.grey),
+                                          ),
+                                          icon: Icon(
+                                            Icons.arrow_drop_down,
+                                            color: Colors.grey,
+                                          ),
+                                          dropdownColor: Color(0xFF1A1F38),
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                          onChanged: (String value) {
+                                            print(value);
+                                            setState(() {
+                                              dropdownValue = value;
+                                            });
+                                          },
+                                          items: <String>[
+                                            'Web',
+                                            'Android',
+                                            'iOS'
+                                          ].map<DropdownMenuItem<String>>(
+                                              (String value) {
+                                            return DropdownMenuItem<String>(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ),
+                                    ),
+                              Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: RaisedButton(
+                                  color: _isActive
+                                      ? Colors.redAccent
+                                      : Color(0xFF0676ED),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25.0),
+                                  ),
+                                  child: Text(
+                                    _isActive ? 'End' : 'Start',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 16),
+                                  ),
+                                  onPressed: _isActive
+                                      ? () {
+                                          setState(() {
+                                            _spinner = true;
+                                          });
+                                          _firestore
+                                              .collection("active")
+                                              .document(_activeUserDocID)
+                                              .delete();
                                           _firestore
                                               .collection("users")
                                               .document(loggedInUser.uid)
                                               .updateData({
-                                            "active": true,
-                                            "activeDocID": docRef.documentID,
+                                            "active": false
+                                          }).then((value) {
+                                            setState(() {
+                                              _spinner = false;
+                                              _isActive = !_isActive;
+                                            });
                                           });
-                                          _activeUserDocID = docRef.documentID;
-                                        });
-                                        setState(() {
-                                          _isActive = !_isActive;
-                                        });
-                                      },
-                              ),
-                            )
-                          ],
+                                        }
+                                      : () {
+                                          setState(() {
+                                            _spinner = true;
+                                          });
+                                          _firestore.collection("active").add({
+                                            "name": _userName,
+                                            "platform": dropdownValue,
+                                            "time": TimeOfDay.now()
+                                                .format(context)
+                                                .toString(),
+                                          }).then((docRef) {
+                                            _firestore
+                                                .collection("users")
+                                                .document(loggedInUser.uid)
+                                                .updateData({
+                                              "active": true,
+                                              "activeDocID": docRef.documentID,
+                                            });
+                                            _activeUserDocID =
+                                                docRef.documentID;
+                                          }).then((value) {
+                                            setState(() {
+                                              _spinner = false;
+                                              _isActive = !_isActive;
+                                            });
+                                          });
+                                        },
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                )
-              : Center(child: CircularProgressIndicator()),
+                    ],
+                  )
+                : Center(child: CircularProgressIndicator()),
+          ),
         ),
       ),
     );
